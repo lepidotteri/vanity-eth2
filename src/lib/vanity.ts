@@ -1,14 +1,11 @@
 import { privateToAddress as privateToAddr } from 'ethereumjs-util'
 import keccak from 'keccak';
 import randomBytes from 'randombytes';
-// import secp256k1 from 'secp256k1';
 
 /**
  * Transform a private key into an address
  */
 const privateToAddress = (privateKey) => {
-  // const pub = secp256k1.publicKeyCreate(privateKey, false).slice(1);
-  // return keccak('keccak256').update(pub).digest().slice(-20).toString('hex');
   return privateToAddr(privateKey);
 };
 
@@ -58,35 +55,22 @@ const isValidChecksum = (address, input, isSuffix) => {
   return true;
 };
 
-const toChecksumAddress = (address) => {
-  const hash = keccak('keccak256').update(address).digest().toString('hex');
-  let ret = '';
-  for (let i = 0; i < address.length; i++) {
-    ret += parseInt(hash[i], 16) >= 8 ? address[i].toUpperCase() : address[i];
-  }
-  return ret;
-};
-
 /**
  * Generate a lot of wallets until one satisfies the input constraints
  * @param input - String chosen by the user
  * @param isChecksum - Is the input case-sensitive
  * @param isSuffix - Is it a suffix, or a prefix
- * @param cb - Callback called after x attempts, or when an address if found
+ * @param cbLose - Callback called when the wrong address is found
+ * @param cbWin - Callback called when the right address is found
  * @returns
  */
-export const getVanityWallet = (input: string, isChecksum: boolean, isSuffix: boolean, cb) => {
+export const getVanityWallet = (input: string, isChecksum: boolean, isSuffix: boolean, cbLose, cbWin) => {
   input = isChecksum ? input : input.toLowerCase();
   let wallet = getRandomWallet();
-  // let attempts = 1;
 
   while (!isValidVanityAddress(wallet.address, input, isChecksum, isSuffix)) {
-    // if (attempts >= step) {
-    //  cb({attempts});
-    //  attempts = 0;
-    // }
     wallet = getRandomWallet();
-    // attempts++;
+    cbLose(wallet)
   }
-  cb({address: '0x' + toChecksumAddress(wallet.address), privKey: wallet.privKey});
+  cbWin(wallet);
 };

@@ -44,6 +44,7 @@
   },
   "dependencies": {
     "@bitauth/libauth": "^1.17.1",
+    "chalk": "^4.1.0",
     "ethereumjs-util": "^7.0.5",
     "keccak": "^3.0.1",
     "randombytes": "^2.1.0",

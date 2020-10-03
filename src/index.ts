@@ -8,8 +8,6 @@ import cluster from 'cluster';
 import Conf from 'conf';
 
 // Setup CLI
-import DraftLog from 'draftlog';
-DraftLog(console)
 import vorpal from 'vorpal';
 const Vorpal = vorpal();
 const chalk = Vorpal.chalk;

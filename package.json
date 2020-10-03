@@ -46,7 +46,6 @@
     "@bitauth/libauth": "^1.17.1",
     "chalk": "^4.1.0",
     "conf": "^7.1.2",
-    "draftlog": "^1.0.12",
     "ethereumjs-util": "^7.0.5",
     "keccak": "^3.0.1",
     "randombytes": "^2.1.0",

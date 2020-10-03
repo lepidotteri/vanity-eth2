@@ -60,17 +60,14 @@ const isValidChecksum = (address, input, isSuffix) => {
  * @param input - String chosen by the user
  * @param isChecksum - Is the input case-sensitive
  * @param isSuffix - Is it a suffix, or a prefix
- * @param cbLose - Callback called when the wrong address is found
- * @param cbWin - Callback called when the right address is found
+ * @param cb - Callback called when the right address is found
  * @returns
  */
-export const getVanityWallet = (input: string, isChecksum: boolean, isSuffix: boolean, cbLose, cbWin) => {
+export const getVanityWallet = (input: string, isChecksum: boolean, isSuffix: boolean, cb) => {
   input = isChecksum ? input : input.toLowerCase();
   let wallet = getRandomWallet();
-
   while (!isValidVanityAddress(wallet.address, input, isChecksum, isSuffix)) {
     wallet = getRandomWallet();
-    cbLose(wallet)
   }
-  cbWin(wallet);
+  cb(wallet);
 };

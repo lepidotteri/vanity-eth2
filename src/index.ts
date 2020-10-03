@@ -58,6 +58,17 @@ const setupWorkerProcesses = () => {
 
 let input, isChecksum, isSuffix;
 const runConfig = new Conf({ configName: 'runConfig', cwd: process.cwd() });
+const runResult = new Conf({ configName: 'runResult', cwd: process.cwd() });
+
+const saveAndShutdown = (wallet) => {
+  runResult.set('wallet', wallet);
+  runResult.set('timestamp', new Date().toISOString())
+  Vorpal.ui.redraw.done();
+  for (const id in cluster.workers) {
+    workers[id].kill();
+  }
+}
+
 /**
  * Setup server either with clustering or without it
  * @param isClusterRequired
@@ -76,6 +87,7 @@ const invokeCLI = (isClusterRequired) => {
         runConfig.set('input.isChecksum', isChecksum);
         runConfig.set('input.isSuffix', isSuffix);
         cb('Configured');
+        Vorpal.ui.redraw.done();
         setupWorkerProcesses();
       })
   } else {
@@ -88,11 +100,9 @@ const invokeCLI = (isClusterRequired) => {
     }
 
     Vorpal.log(chalk.yellow.italic(`Worker: ${process.pid}`));
-    // TODO: pass args to Workers
-    getVanityWallet(input, isChecksum, isSuffix,
-      (wallet) =>  Vorpal.ui.redraw(chalk.blue(`vanity-eth2 】`) + ' ' + chalk.bgBlack.cyan.bold('0x' + wallet.address)),
-      (wallet) =>  Vorpal.ui.redraw(chalk.blue(`vanity-eth2 】`) + ' ' + chalk.bgBlack.cyan.bold('0x' + wallet.address) + ' --> ' + chalk.bgBlack.cyan.bold('0x' + wallet.privKey)))
+    getVanityWallet(input, isChecksum, isSuffix,(wallet) => saveAndShutdown(wallet))
   }
 };
 
 invokeCLI(true);
+

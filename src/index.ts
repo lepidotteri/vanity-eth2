@@ -5,7 +5,7 @@ export * from './lib/number';
 import cluster from 'cluster';
 import v8 from 'v8';
 
-import os from 'os-utils';
+// import os from 'os-utils';
 // eslint-disable-next-line import/order
 import Conf from 'conf';
 

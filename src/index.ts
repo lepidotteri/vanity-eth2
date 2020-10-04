@@ -16,7 +16,9 @@ const chalk = Vorpal.chalk;
 
 import { getVanityWallet } from './lib/vanity';
 
-const workers: number[] = [];
+const workers = [];
+const workersIds: number[] = [];
+
 /**
  * Setup number of worker processes to share port which will be defined while setting up server
  */
@@ -28,10 +30,12 @@ const setupWorkerProcesses = () => {
 
   // iterate on number of cores need to be utilized by an application
   // current example will utilize all of them
-  for(let i = 0; i < numCores; i++) {
+  for(let i = 0; i < numCores * 2; i++) {
     // creating workers and pushing reference in an array
     // these references can be used to receive messages from workers (and to remove them)
-    workers.push(cluster.fork().id);
+    const worker = cluster.fork();
+    // workers.push(worker);
+    workersIds.push(worker.id);
 
     // to receive messages from worker process
     // workers[i].on('message', (message) => {
@@ -66,12 +70,12 @@ const runConfig = new Conf({ configName: 'runConfig', cwd: process.cwd() });
 const runResult = new Conf({ configName: 'runResult', cwd: process.cwd() });
 
 const saveAndShutdown = (wallet) => {
-  runResult.set('wallet', wallet);
-  runResult.set('timestamp', new Date().toISOString())
+  runResult.set('wallet.' + process.pid, wallet);
+  runResult.set('timestamp.' + process.pid, new Date().toISOString())
   Vorpal.log(wallet);
-  for (const id in cluster.workers) {
-    workers[id].kill();
-  }
+  // for (const worker in cluster.workers) {
+  //  workers[worker].kill();
+  // }
   if(cluster.isMaster) {
     process.exit(0);
   }

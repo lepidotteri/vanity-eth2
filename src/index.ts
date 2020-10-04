@@ -44,16 +44,16 @@ const setupWorkerProcesses = () => {
   });
 
   // if any of the worker process dies then start a new one by simply forking another one
-  cluster.on('exit', (worker, code, signal) => {
-    Vorpal.log(chalk.cyan('Worker ' + worker.process.pid + ' died with code: ' + chalk.red(code) + ', and signal: ' + chalk.green(signal)));
-    Vorpal.log(chalk.cyan('Starting a new worker'));
-    cluster.fork();
-    workers.push(cluster.fork());
-    // to receive messages from worker process
-    workers[workers.length - 1].on('message', (message) => {
-      Vorpal.log(chalk.yellow.italic(`Worker ${process.pid} `) + message);
-    });
-  });
+  // cluster.on('exit', (worker, code, signal) => {
+  //   Vorpal.log(chalk.cyan('Worker ' + worker.process.pid + ' died with code: ' + chalk.red(code) + ', and signal: ' + chalk.green(signal)));
+  //   Vorpal.log(chalk.cyan('Starting a new worker'));
+  //   cluster.fork();
+  //   workers.push(cluster.fork());
+  //   // to receive messages from worker process
+  //   workers[workers.length - 1].on('message', (message) => {
+  //     Vorpal.log(chalk.yellow.italic(`Worker ${process.pid} `) + message);
+  //   });
+  // });
 };
 
 let input, isChecksum, isSuffix;
